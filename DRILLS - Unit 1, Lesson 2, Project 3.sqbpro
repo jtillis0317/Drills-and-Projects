@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/jesst/Downloads/bikeshare.db" foreign_keys="1"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="5580"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="stations"/><default_encoding codec=""/><browsetable_info data="AAAAAA=="/></tab_browse><tab_sql><sql name="DRILLS - Unit 1, Lesson 2, Project 2.sql">SELECT 
+	zip,
+	MAX(maxtemperaturef)
+FROM 
+	weather
+GROUP BY zip
+
+--The hottest day was 134 degrees, and it took place in 94063
+
+SELECT 
+	start_station,
+	COUNT(*)
+FROM 
+	trips
+GROUP BY start_station
+
+SELECT 
+	MIN(duration)
+FROM 
+	trips
+--The shortest trip was 60 min.
+
+
+SELECT 
+	AVG(duration),
+	end_station
+FROM 
+	trips
+GROUP BY end_station</sql><current_tab id="0"/></tab_sql></sqlb_project>
