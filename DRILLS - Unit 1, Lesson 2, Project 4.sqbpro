@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/jesst/Downloads/bikeshare.db" foreign_keys="1"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="5580"/><expanded_item id="0" parent="1"/><expanded_item id="2" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="trips"/><default_encoding codec=""/><browsetable_info data="AAAAAwAAAA4AdwBlAGEAdABoAGUAcgAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////AAAAAP////8AAAAKAHQAcgBpAHAAcwAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////AAAAAP////8AAAAQAHMAdABhAHQAaQBvAG4AcwAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////AAAAAP////8="/></tab_browse><tab_sql><sql name="SQL 1">--the three longest trips on rainy days all had a duration of 81484 and occurred in the 94063 zip code
+
+SELECT 
+	weather.precipitationin,
+	weather.ZIP,
+	trips.zip_code,
+	trips.duration
+FROM 
+	weather 
+JOIN 
+	trips
+ON
+	weather.ZIP = trips.zip_code
+WHERE 
+	weather.PrecipitationIn &gt; 0
+ORDER BY 
+	trips.duration DESC
+LIMIT 3;
+
+	
+
+
+
+--The station that is full most often is Cyril Magnin St at Ellis St.
+
+WITH 
+	Fullness
+AS (	
+SELECT 
+	status.docks_available,
+	status.station_id,
+	stations.station_id,
+	stations.name
+FROM 
+	status
+JOIN 
+	stations 
+ON 
+	status.station_id = stations.station_id
+WHERE 
+	status.docks_available = 0
+GROUP BY 1
+)
+
+SELECT 
+	Fullness.station_id,
+	Fullness.name,
+	COUNT(*) Times_Full
+FROM 
+	Fullness
+GROUP BY Fullness.station_id
+ORDER BY Times_Full DESC 
+LIMIT 1;
+
+
+---below is the code to find the list of stations with a count of number of trips starting at that station but ordered by dock count
+SELECT 
+	trips.start_station,
+	stations.dockcount,
+	stations.name,
+	COUNT(*)
+FROM 
+	trips
+JOIN 
+	stations
+ON
+	trips.start_station = stations.name
+GROUP BY 1
+ORDER BY stations.dockcount;
+
+--CHALLENGE
+SELECT 
+	trips.duration,
+	weather.PrecipitationIn,
+	weather.ZIP,
+	trips.zip_code,
+	weather.Date
+FROM 
+	trips
+JOIN 
+	weather
+ON
+	weather.zip = trips.zip_code
+WHERE 
+	weather.PrecipitationIn &gt; 0
+GROUP BY weather.date 
+
+
+	</sql><current_tab id="0"/></tab_sql></sqlb_project>
