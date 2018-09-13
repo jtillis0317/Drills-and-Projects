@@ -1,51 +1,46 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/jesst/Test.db" foreign_keys="1"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="3078"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="0"/><expanded_item id="5" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="listings"/><default_encoding codec=""/><browsetable_info data="AAAABAAAAA4AcgBlAHYAaQBlAHcAcwAAAAEAAAABAAAAAAAAAAIAAAACAAAAAAAAAAEAAAAAAAAAAAD//////////wAAAAD/////AAAAHABuAGUAaQBnAGgAYgBvAHUAcgBoAG8AbwBkAHMAAAABAAAAAAAAAAAAAAAAAAAAAAD//////////wAAAAD/////AAAAFABsAGkAcwB0AGkAbgBnAHMAXwAyAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////8AAAAA/////wAAABAAbABpAHMAdABpAG4AZwBzAAAACgAAAAAAAAAAAAAAAQAAAAoAAAAAAAAAAAD//////////wAAAAD/////"/></tab_browse><tab_sql><sql name="SQL 1">SELECT 
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/jesst/Downloads/Test.db" foreign_keys="1"/><window><current_tab id="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="150"/><column_width id="3" width="2221"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="calendar"/><default_encoding codec=""/><browsetable_info data="AAAABgAAAA4AcgBlAHYAaQBlAHcAcwAAAAEAAAABAAAAAAAAAAIAAAACAAAAAAAAAAEAAAAAAAAAAAD//////////wAAAAD/////AAAAHABuAGUAaQBnAGgAYgBvAHUAcgBoAG8AbwBkAHMAAAABAAAAAAAAAAAAAAAAAAAAAAD//////////wAAAAD/////AAAAFABsAGkAcwB0AGkAbgBnAHMAXwAyAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////8AAAAA/////wAAABAAbABpAHMAdABpAG4AZwBzAAAACgAAAAAAAAAAAAAAAQAAAAoAAAAAAAAAAAD//////////wAAAAD/////AAAAEABjAGEAbABlAG4AZABhAHIAAAAAAAAAAAAAAAAAAAAAAAAAAAD//////////wAAAAD/////AAAAEgBDAGEAbABfAE0AbwBuAHQAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////AAAAAP////8="/></tab_browse><tab_sql><sql name="SQL 1"></sql><sql name="SQL 1">SELECT 
 	neighbourhood,
 	MAX(price),
 	room_type,
 	minimum_nights
 FROM
-	listings_2
+	listings_2;
 
 --The most expensive listing is listed at $1000 a night. The listing is located in West Colfax and includes the entire home/apartment. You have to rent it for a minimum of two nights.
 
 SELECT 
-	neighbourhood, 
-	COUNT(neighbourhood)
+	neighbourhood,
+	AVG(availability_365)
 FROM 
-	listings_2
-GROUP BY neighbourhood
-ORDER BY COUNT(neighbourhood) DESC 
---------
-WITH 
-	neigh_counts
-AS (
-SELECT 
-	listing_id,
-	COUNT(listing_id) Amount
-FROM 
-	reviews 
-GROUP BY listing_id
-ORDER BY COUNT(listing_id) DESC
-)
+	listings
+GROUP BY 1
+ORDER BY AVG(availability_365);
+
+--The most popular neighborhoods, based on the neighborhood's average annual availability are 
+--Harvey Park South (302 occupied days), Marston (285 occupied days), and Barnum (281 occupied days)
+
+SELECT strftime(&quot;%m&quot;, date) FROM calendar;
+
+CREATE TABLE Cal_Month (listing INTEGER, mon INTEGER, availability INTEGER, price INTEGER);
+
+INSERT INTO Cal_Month (listing, mon, availability, price) SELECT listing_id, strftime(&quot;%m&quot;, date), available, price FROM calendar;
 
 SELECT 
-	listings_2.id,
-	listings_2.neighbourhood,
-	neigh_counts.listing_id,
-	neigh_counts.Amount
+	AVG(trim(price, &quot;$&quot;)),
+	mon
+FROM Cal_Month
+GROUP BY 2;
+
+--It is cheapest to go to Denver in the summer months (June through September). 
+--The cheapest month is September - at an average of $45 a night.
+
+SELECT 
+	mon,
+	COUNT(availability)
 FROM 
-	listings_2
-JOIN 
-	neigh_counts
-ON
-	listings_2.id = neigh_counts.listing_id
-ORDER BY Amount DESC 
-LIMIT 20
+	Cal_Month
+WHERE availability LIKE &quot;f&quot;
+GROUP BY mon
+ORDER BY COUNT(availability) DESC 
 
----When determining the most popular city, it depends on your definition of &quot;popular.&quot; 
---One definition would be that that neighborhood has the most listings. In that case, the most popular neighborhoods are Five Points, Highland, and Capitol Hill.
---A second definition of &quot;popular&quot; would be that people book (and leave reviews) there most often. In that case, the most popular neighborhoods are Highland, Cheesman Park, and North Park Hill.
-
---I'm struggling with time of year questions. We'll talk about it on Tuesday.
-
-</sql><current_tab id="0"/></tab_sql></sqlb_project>
+--The busiest time to go to Denver is in the core summer months of July and August.</sql><current_tab id="1"/></tab_sql></sqlb_project>
